@@ -1,0 +1,75 @@
+﻿@model StackOverFlowClone.ViewModels.EditUserDetailsViewModel
+@{
+    ViewBag.Title = "Change Profile";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Change Profile</h1>
+        @using (Html.BeginForm("ChangeProfile", "Account", FormMethod.Post, new { novalidate = "novalidate", @class = "needs-validation" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(edit => edit.UserID)
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(edit => edit.Name)
+                    @Html.TextBoxFor(edit => edit.Name, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter Name",
+                   required = "required",
+                        pattern = "^[a-zA-Z]*$",
+                        autofocus = "autofocus"
+                    })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please Enter Name [Alphabets only]
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(edit => edit.Email)
+                    @Html.DisplayFor(edit => edit.Email, new { @class = "form-control", type = "email" })
+                    @Html.HiddenFor(edit => edit.Email)
+                </div>
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(edit => edit.Mobile)
+                    @Html.TextBoxFor(edit => edit.Mobile, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter Phone Number",
+                        required = "required",
+                        pattern = "^\\d{10}$",
+                    })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Invalid phone number
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("a[href='/Account/ChangeProfile']").attr("id", "active");
+        $(document).on("submit", ".needs-validation", validate);
+        $(".needs-validation input").blur(validate);
+    });
+    function validate(event) {
+        if ($(".needs-validation")[0].checkValidity() == false) {
+            event.preventDefault();
+        }
+        $(".needs-validation")[0].classList.add("was-validated");
+    }
+    function escapeRegExp(str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    }
+</script>

@@ -1,0 +1,136 @@
+﻿@model StackOverFlowClone.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Registration</h1>
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { novalidate = "novalidate", @class = "needs-validation" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    @Html.LabelFor(register => register.Name)
+                    @Html.TextBoxFor(register => register.Name, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter Name",
+                   required = "required",
+                        pattern = "^[a-zA-Z]*$",
+                        autofocus = "autofocus"
+                    })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please Enter Name [Alphabets only]
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(register => register.Email)
+                    @Html.TextBoxFor(register => register.Email, new { @class = "form-control", placeholder = "Email", required = "required", type = "email" })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Invalid email
+                    </div>
+                    <span class="email-exist text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(register => register.Mobile)
+                    @Html.TextBoxFor(register => register.Mobile, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter Phone Number",
+                        required = "required",
+                        pattern = "^\\d{10}$",
+                    })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Invalid phone number
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(register => register.Password)
+                    @Html.TextBoxFor(register => register.Password, new
+               {
+                   @class = "form-control",
+                   placeholder = "Password",
+                   required = "required",
+                   type = "password",
+                   minlength = "6",
+                   oninput = "form.ConfirmPassword.pattern = escapeRegExp(this.value)"
+               })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Password must contain at least 6 characters
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    @Html.LabelFor(register => register.ConfirmPassword)
+                    @Html.TextBoxFor(register => register.ConfirmPassword, new
+                    {
+                   @class = "form-control",
+                        placeholder = "Confirm Password",
+                        required = "required",
+                        type = "password"
+                    })
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Password and Confirm Password do not match!
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("a[href='/Account/Register']").attr("id", "active");
+        $(document).on("submit", ".needs-validation", validate);
+        $(".needs-validation input").blur(validate);
+        $("#Email").blur(checkEmailIsRegistered);
+    });
+    function validate(event) {
+        if ($(".needs-validation")[0].checkValidity() == false || $(".email-exist").text() != "") {
+            event.preventDefault();
+        }
+        $(".needs-validation")[0].classList.add("was-validated");
+    }
+    function escapeRegExp(str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    }
+    function checkEmailIsRegistered() {
+        $.ajax({
+            url: "/api/account/emailExists?email=" + $("#Email").val(),
+            type: "GET",
+            success:
+                function (response) {
+                    if (response == "Not Found") {
+                        $(".email-exist").text("");
+                        $(".email-exist").parent(".form-group").find(".valid-feedback").css("color", "#28a745");
+                    }
+                    else {
+                        $(".email-exist").text("Email Already Registered!");
+                        $(".email-exist").parent(".form-group").find(".valid-feedback").css("color", "white");
+                    }
+                },
+            error: function () { $(".email-exist").text("Error"); }
+        });
+    }
+    
+</script>

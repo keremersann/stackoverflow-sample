@@ -1,0 +1,54 @@
+﻿@model StackOverFlowClone.ViewModels.NewQuestionViewModel
+@{
+    List<SelectListItem> categoryDropdownItems = new List<SelectListItem>();
+    if (ViewBag.Categories != null)
+    {
+        var categories = (List<StackOverFlowClone.ViewModels.CategoryViewModel>)ViewBag.Categories;
+        foreach (var category in categories)
+        {
+            categoryDropdownItems.Add(new SelectListItem() { Text = category.CategoryName, Value = category.CategoryID.ToString() });
+        }
+    }
+
+}
+<div class="row">
+    <div class="col-sm-12">
+        @using (@Html.BeginForm("Create", "Questions", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+        {
+            @Html.AntiForgeryToken();
+            <div class="form-group col-sm-12">
+                @Html.LabelFor(m => m.QuestionName)
+                @Html.TextAreaFor(m => m.QuestionName, new { @class = "form-control", required = "required", autofocus = "autofocus" })
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please Enter Question
+                </div>
+            </div>
+            <div class="form-group col-sm-12">
+                @Html.LabelFor(m => m.CategoryID, "Category")
+                @Html.DropDownListFor(m => m.CategoryID, categoryDropdownItems, "Please Select", new { @class = "form-control", required = "required"})
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Please Select a category
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Question</button>
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).on("submit", ".needs-validation", validate);
+        $(".needs-validation textarea").blur(validate);
+    });
+    function validate(event) {
+        if ($(".needs-validation")[0].checkValidity() == false) {
+            event.preventDefault();
+        }
+        $(".needs-validation")[0].classList.add("was-validated");
+    }
+</script>
